@@ -53,7 +53,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();  //로그인 페이지 permit 뚫어주기
     }
 
-
     private void logout(HttpSecurity http) throws Exception {
         http.logout()
                 .logoutUrl("/logout") //기본적으로 post 요청임
