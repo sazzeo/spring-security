@@ -1,24 +1,21 @@
 package com.spring.security.springsecurity.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
 
 
 @Configuration
 @EnableWebSecurity //웹 보안 활성화
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -29,10 +26,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
 
         loginApi(http);
+        logout(http);
+        rememberMe(http);
     }
 
 
-    //Form Login 인증 API
+    /**
+     * Form Login 인증 API
+     * @param http http
+     * @throws Exception Exception
+     */
     private void loginApi(HttpSecurity http) throws Exception {
 
         http.formLogin()
@@ -53,6 +56,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll();  //로그인 페이지 permit 뚫어주기
     }
 
+    /**
+     * Form Logout Api
+     * @param http http
+     * @throws Exception Exception
+     */
     private void logout(HttpSecurity http) throws Exception {
         http.logout()
                 .logoutUrl("/logout") //기본적으로 post 요청임
@@ -68,5 +76,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     response.sendRedirect("/login");
                 });
     }
+
+    /**
+     * 자동로그인 기능 : RememberMe
+     * 인증 객체가 없을 때만 동작함
+     * @param http http
+     * @throws Exception Exception
+     */
+    private void rememberMe(HttpSecurity http) throws Exception {
+        http.rememberMe()
+                .rememberMeParameter("remember") //기본 파라미터명은 remember-me
+                .tokenValiditySeconds(3600) // 토큰 유효시간(3600초) , 기본은 14일
+                .alwaysRemember(true) //체킹하지 않아도 리멤버 미 항상 실행
+                .userDetailsService(userDetailsService);  //사용자 계정을 관리하는 클래스(* 반드시 설정해야함)
+
+    }
+
 
 }
