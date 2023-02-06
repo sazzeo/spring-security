@@ -1,26 +1,21 @@
 package com.spring.security.springsecurity.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import javax.servlet.http.HttpSession;
 
-
-@Configuration
-@EnableWebSecurity //웹 보안 활성화
+//@Configuration
+//@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     @Autowired
     private UserDetailsService userDetailsService;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-
         //인가 정책
         http
                 .authorizeRequests()
@@ -111,8 +106,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  */
                 .sessionManagement()
                 .maximumSessions(1)//최대 세션 개수 , -1 : 세션 제한 안함
-                .maxSessionsPreventsLogin(false) //true: 동시 로그인 차단하기, false(default)시 이전 세션 만료시킴
-                .expiredUrl("/expired")//세션이 만료된 경우 이동할 페이지
+                .maxSessionsPreventsLogin(true) //true: 동시 로그인 차단하기, false(default)시 이전 세션 만료시킴
+//                .expiredUrl("/expired")//세션이 만료된 경우 이동할 페이지
                 .and()
 
                 /*
@@ -132,8 +127,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                  */
                 //세션 생성정책
                 .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED);
-
-
     }
 
 
