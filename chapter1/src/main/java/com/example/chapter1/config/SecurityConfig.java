@@ -1,4 +1,4 @@
-package com.spring.security.springsecurity.security;
+package com.example.chapter1.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
